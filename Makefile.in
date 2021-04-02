@@ -103,6 +103,7 @@ RELEASE = @RELEASE@
 #
 BEXE = @BUILD_EXEEXT@
 TEXE = @TARGET_EXEEXT@
+APE_EXT = .com
 
 # The following variable is "1" if the configure script was able to locate
 # the tclConfig.sh file.  It is an empty string otherwise.  When this
@@ -634,7 +635,7 @@ DBFUZZ_OPT =
 # This is the default Makefile target.  The objects listed here
 # are what get build when you type just "make" with no arguments.
 #
-all:	sqlite3.h libsqlite3.la sqlite3$(TEXE) $(HAVE_TCL:1=libtclsqlite3.la)
+all:	sqlite3.h libsqlite3.la sqlite3$(APE_EXT) $(HAVE_TCL:1=libtclsqlite3.la)
 
 Makefile: $(TOP)/Makefile.in
 	./config.status
@@ -653,6 +654,10 @@ libtclsqlite3.la:	tclsqlite.lo libsqlite3.la
 		-version-info "8:6:8" \
 		-avoid-version
 
+sqlite3$(APE_EXT): sqlite3$(TEXE)
+	echo "calling objcopy to create APE"
+	objcopy -S -O binary $< $@
+
 sqlite3$(TEXE):	shell.c sqlite3.c
 	$(LTLINK) $(READLINE_FLAGS) $(SHELL_OPT) -o $@ \
 		shell.c sqlite3.c \
@@ -669,7 +674,7 @@ scrub$(TEXE):	$(TOP)/ext/misc/scrub.c sqlite3.lo
 		$(TOP)/ext/misc/scrub.c sqlite3.lo $(TLIBS)
 
 srcck1$(BEXE):	$(TOP)/tool/srcck1.c
-	$(BCC) -o srcck1$(BEXE) $(TOP)/tool/srcck1.c
+	$(BCC) -o srcck1$(BEXE) $(TOP)/tool/srcck1.c $(TLIBS)
 
 sourcetest:	srcck1$(BEXE) sqlite3.c
 	./srcck1 sqlite3.c
@@ -782,13 +787,13 @@ sqlite3.lo:	sqlite3.c
 # Rules to build the LEMON compiler generator
 #
 lemon$(BEXE):	$(TOP)/tool/lemon.c $(TOP)/tool/lempar.c
-	$(BCC) -o $@ $(TOP)/tool/lemon.c
+	$(BCC) -o $@ $(TOP)/tool/lemon.c $(TLIBS)
 	cp $(TOP)/tool/lempar.c .
 
 # Rules to build the program that generates the source-id
 #
 mksourceid$(BEXE):	$(TOP)/tool/mksourceid.c
-	$(BCC) -o $@ $(TOP)/tool/mksourceid.c
+	$(BCC) -o $@ $(TOP)/tool/mksourceid.c $(TLIBS)
 
 # Rules to build individual *.o files from generated *.c files. This
 # applies to:
@@ -1077,7 +1082,7 @@ sqlite3rc.h:	$(TOP)/src/sqlite3.rc $(TOP)/VERSION
 	echo '#endif' >>sqlite3rc.h
 
 keywordhash.h:	$(TOP)/tool/mkkeywordhash.c
-	$(BCC) -o mkkeywordhash$(BEXE) $(OPT_FEATURE_FLAGS) $(OPTS) $(TOP)/tool/mkkeywordhash.c
+	$(BCC) -o mkkeywordhash$(BEXE) $(OPT_FEATURE_FLAGS) $(OPTS) $(TOP)/tool/mkkeywordhash.c $(TLIBS)
 	./mkkeywordhash$(BEXE) >keywordhash.h
 
 # Source files that go into making shell.c

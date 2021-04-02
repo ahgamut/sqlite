@@ -865,23 +865,22 @@ static int sqliteErrorFromPosixError(int posixError, int sqliteIOErr) {
           (sqliteIOErr == SQLITE_IOERR_UNLOCK) || 
           (sqliteIOErr == SQLITE_IOERR_RDLOCK) ||
           (sqliteIOErr == SQLITE_IOERR_CHECKRESERVEDLOCK) );
-  switch (posixError) {
-  case EACCES: 
-  case EAGAIN:
-  case ETIMEDOUT:
-  case EBUSY:
-  case EINTR:
-  case ENOLCK:  
-    /* random NFS retry error, unless during file system support 
-     * introspection, in which it actually means what it says */
-    return SQLITE_BUSY;
-    
-  case EPERM: 
-    return SQLITE_PERM;
-    
-  default: 
-    return sqliteIOErr;
-  }
+  if (posixError ==  EACCES 
+          || posixError ==  EAGAIN
+          || posixError ==  ETIMEDOUT
+          || posixError ==  EBUSY
+          || posixError ==  EINTR
+          || posixError ==  ENOLCK)
+      /* random NFS retry error, unless during file system support 
+       * introspection, in which it actually means what it says */
+      return SQLITE_BUSY;
+
+  else if (posixError ==  EPERM)
+      return SQLITE_PERM;
+
+  else
+      return sqliteIOErr;
+  
 }
 
 
@@ -3382,17 +3381,14 @@ static int unixRead(
     ** prior to returning to the application by the sqlite3ApiExit()
     ** routine.
     */
-    switch( pFile->lastErrno ){
-      case ERANGE:
-      case EIO:
+    if(pFile->lastErrno == ERANGE)return SQLITE_IOERR_CORRUPTFS;
+    else if(pFile->lastErrno == EIO)return SQLITE_IOERR_CORRUPTFS;
 #ifdef ENXIO
-      case ENXIO:
+    else if(pFile->lastErrno == ENXIO)return SQLITE_IOERR_CORRUPTFS;
 #endif
 #ifdef EDEVERR
-      case EDEVERR:
+    else if(pFile->lastErrno == EDEVERR)return SQLITE_IOERR_CORRUPTFS;
 #endif
-        return SQLITE_IOERR_CORRUPTFS;
-    }
     return SQLITE_IOERR_READ;
   }else{
     storeLastErrno(pFile, 0);   /* not a system error */

@@ -1,0 +1,94 @@
+# cosmopolitan
+libcosmo/ 
+!libcosmo/README.md
+
+# SQLite3 build artifacts
+
+.target_source
+Makefile
+config.h
+config.log
+config.status
+fts5.c
+fts5.h
+fts5parse.c
+fts5parse.h
+fts5parse.sql
+fts5parse.y
+keywordhash.h
+lemon
+lempar.c
+libtool
+mkkeywordhash
+mksourceid
+opcodes.c
+opcodes.h
+parse.c
+parse.h
+parse.sql
+parse.y
+shell.c
+sqlite3
+sqlite3.c
+sqlite3.h
+sqlite3.pc
+sqlite3ext.h
+sqlite3session.h
+tsrc/
+
+
+# Prerequisites
+*.d
+
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+
+# Linker output
+*.ilk
+*.map
+*.exp
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Libraries
+*.libs
+*.a
+*.la
+*.lo
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.com
+*.com.dbg
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# Kernel Module Compile Results
+*.mod*
+*.cmd
+.tmp_versions/
+modules.order
+Module.symvers
+Mkfile.old
+dkms.conf
+
